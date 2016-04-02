@@ -54,6 +54,17 @@ public class Display {
 		LCD.drawInt(learner.getLineValue(), 6, 4);
 	}
 	
+	public static void debugLineLearnerState(RobotState state, Robot robot, LineLearner learner) {
+		LCD.clear();
+		drawState(state.getRobotMode());
+		drawHeading(state.getHeading());
+		LCD.drawString("Avg: ", 0, 3);
+		LCD.drawInt(learner.getAvg(), 5, 3);
+		LCD.drawString("SD: ", 0, 4);
+		LCD.drawString(Double.toString(learner.getSd()), 4, 4);
+		LCD.drawString("Press enter to begin", 0, 5);
+	}
+	
 	public static void drawNavigationState(RobotState state, Robot robot, Navigator navigtor) {
 		LCD.clear();
 		drawState(state.getRobotMode());

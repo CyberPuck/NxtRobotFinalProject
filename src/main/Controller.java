@@ -54,6 +54,7 @@ public class Controller {
 		LineLearner lineLearner = new LineLearner(robot);
 		Navigator navigator = new Navigator(robot, state);
 		Finish finish = new Finish(robot, state);
+		boolean courseCompleted = false;
 		// Never exit :)
 		while (true) {
 			switch (state.getRobotMode()) {
@@ -67,6 +68,8 @@ public class Controller {
 				lineLearner.learnLine();
 				if (lineLearner.isLearnerComplete()) {
 					state.setLineValue(lineLearner.getLineValue());
+					Display.debugLineLearnerState(state, robot, lineLearner);
+					Button.waitForAnyPress();
 					state.incrementMode();
 				}
 				break;
@@ -85,8 +88,10 @@ public class Controller {
 				}
 				break;
 			case ERROR:
-				if (finish.isComplete()) {
+				if (finish.isComplete() && !courseCompleted) {
 					Display.drawComplete();
+					// stop the display from flickering
+					courseCompleted = true;
 				} else {
 					// TODO: Should we error handle?
 					robot.stop();

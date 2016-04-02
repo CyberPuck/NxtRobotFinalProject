@@ -10,17 +10,21 @@ import robot.Robot;
  */
 public class LineLearner {
 	// range to accept light value as the line
-	public static int RANGE = 2;
+	public static int RANGE = 5;
 	// object representing the robot
 	private Robot robot;
 	// flag indicating if the learner is complete
 	private boolean learnerComplete;
-	// flag indicating if we learned the color of the line
-	private boolean lineColorLocked = false;
 	// learned value of the line
 	private int lineValue;
 	// flag indicating if this is the first capture
-	private boolean firstCapture;
+	private int index;
+	// array of light values that will be averaged
+	private int lightArray[] = new int[5];
+	// Average from the array
+	private int avg;
+	// standard deviation of the average
+	private double sd;
 	
 	/**
 	 * Initialize variables and get the robot.
@@ -28,8 +32,8 @@ public class LineLearner {
 	 */
 	public LineLearner(Robot robot) { 
 		lineValue = 0;
+		index = 0;
 		learnerComplete = false;
-		firstCapture = true;
 		this.robot = robot;
 	}
 	
@@ -41,26 +45,37 @@ public class LineLearner {
 		return lineValue;
 	}
 	
+	public int getAvg() {
+		return avg;
+	}
+
+	public double getSd() {
+		return sd;
+	}
+
 	public void learnLine() {
-		if(!lineColorLocked && firstCapture) {
-			// first capture
-			lineValue = robot.getLight();
-			firstCapture = false;
-		} else if(!lineColorLocked){
-			int temp = robot.getLight();
-			if(Math.abs(temp - lineValue) <= RANGE) {
-				lineColorLocked = true;
-			} else {
-				// reset and retry
-				lineValue = 0;
-				firstCapture = true;
+		if(index < lightArray.length) {
+			lightArray[index++] = robot.getLight();
+		} else {
+			// average the values
+			double average = 0.0;
+			for(int i = 0; i < lightArray.length; i++) {
+				average += lightArray[i];
 			}
-		} else if(lineColorLocked){
-			// get the robot into the MOE
-			robot.moveForward();
-			int sample = robot.getLight();
-			if(sample < lineValue - RANGE || sample > lineValue + RANGE) {
-				// light sensor off the line, can start navigation
+			average = average / lightArray.length;
+			// calculate the standard deviation
+			double standardDeviation = 0.0;
+			for(int i = 0; i < lightArray.length; i++) {
+				standardDeviation += Math.pow((lightArray[i] - average), 2);
+			}
+			standardDeviation = standardDeviation / lightArray.length;
+			standardDeviation = Math.sqrt(standardDeviation);
+			// add the debug value 
+			avg = (int)Math.round(average);
+			sd = standardDeviation;
+			// check that the standard deviation is less than the expected range
+			if(standardDeviation <= RANGE) {
+				lineValue = (int)Math.round(average);
 				learnerComplete = true;
 			}
 		}
