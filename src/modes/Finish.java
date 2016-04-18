@@ -13,8 +13,7 @@ public class Finish {
 	private boolean onLine;
 	// flag indicating if the robot needs to adjust heading
 	private boolean updateHeading;
-	// current heading, TODO: Should a chassis class handle this?
-	private double currentHeading;
+	// indication if the robot has finished the course
 	private boolean finishComplete;
 	private Robot robot;
 	private RobotState state;

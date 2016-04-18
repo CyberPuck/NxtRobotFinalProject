@@ -18,12 +18,16 @@ public class Navigator {
 	private Robot robot;
 	private RobotState state;
 	private boolean naviagtionComplete;
+	private boolean enteredMOE;
+	private boolean lineReached;
 
 	public Navigator(Robot robot, RobotState state) {
 		evading = false;
 		this.robot = robot;
 		this.state = state;
 		this.naviagtionComplete = false;
+		this.enteredMOE = false;
+		lineReached = false;
 	}
 
 	public int getNearestDistance() {
@@ -37,17 +41,22 @@ public class Navigator {
 	public boolean isNavigationComplete() {
 		return naviagtionComplete;
 	}
-	
+
 	/**
 	 * Step through navigation.
 	 */
 	public void navigate() {
-		if (state.isLine(robot.getLight())) {
-			this.naviagtionComplete = true;
-		} else if (robot.getDistance() < EVADE_DISTANCE) {
+		if (robot.getDistance() < EVADE_DISTANCE) {
 			evading = true;
 			// TODO: Evade that shit and update heading
+		} else if (state.isLine(robot.getLight()) && enteredMOE) {
+			this.naviagtionComplete = true;
 		} else {
+			if (!lineReached && state.isLine(robot.getLight())) {
+				lineReached = true;
+			} else if (lineReached && !state.isLine(robot.getLight())) {
+				enteredMOE = true;
+			}
 			robot.moveForward();
 		}
 	}

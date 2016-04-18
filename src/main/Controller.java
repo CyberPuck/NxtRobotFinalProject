@@ -4,7 +4,6 @@ import learners.LineLearner;
 import lejos.nxt.Button;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
-import lejos.nxt.Sound;
 import modes.Finish;
 import modes.Navigator;
 import modes.RobotState;
@@ -55,18 +54,21 @@ public class Controller {
 		Navigator navigator = new Navigator(robot, state);
 		Finish finish = new Finish(robot, state);
 		boolean courseCompleted = false;
-		// Never exit :)
-		while (true) {
+		// Only exit after the course has completed
+		while (!courseCompleted) {
 			switch (state.getRobotMode()) {
 			case READY:
+				// System is online, wait for operator to initiate line learner
 				Display.drawReadyState(state);
 				Button.waitForAnyPress();
 				state.incrementMode();
 				break;
 			case LINE_LEARNER:
+				// operator has started line learner
 				Display.drawLineLearnerState(state, robot, lineLearner);
 				lineLearner.learnLine();
 				if (lineLearner.isLearnerComplete()) {
+					// ready to move through the course, wait for input to start
 					state.setLineValue(lineLearner.getLineValue());
 					Display.debugLineLearnerState(state, robot, lineLearner);
 					Button.waitForAnyPress();
@@ -74,16 +76,20 @@ public class Controller {
 				}
 				break;
 			case NAVIGATION:
+				// robot is trying to navigate the course
 				Display.drawNavigationState(state, robot, navigator);
 				navigator.navigate();
 				if (navigator.isNavigationComplete()) {
+					// finish up
 					state.incrementMode();
 				}
 				break;
 			case FINISH:
+				// robot is finishing movement
 				Display.drawFinishMode(state, robot, finish);
 				finish.finish();
 				if (finish.isComplete()) {
+					// robot is stopped
 					state.incrementMode();
 				}
 				break;
@@ -92,7 +98,7 @@ public class Controller {
 					Display.drawComplete();
 					// stop the display from flickering
 					courseCompleted = true;
-				} else {
+				} else if(!finish.isComplete()){
 					// TODO: Should we error handle?
 					robot.stop();
 					Display.drawError();
@@ -107,5 +113,7 @@ public class Controller {
 				break;
 			}
 		}
+		// Wait for input so the last debug output can be read
+		Button.waitForAnyPress();
 	}
 }
