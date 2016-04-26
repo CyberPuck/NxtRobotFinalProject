@@ -2,8 +2,6 @@ package main;
 
 import learners.LineLearner;
 import lejos.nxt.Button;
-import lejos.nxt.NXTRegulatedMotor;
-import lejos.nxt.SensorPort;
 import modes.Finish;
 import modes.Navigator;
 import modes.RobotState;
@@ -42,8 +40,8 @@ public class Controller {
 	 * @param left
 	 *            Motor on left side, looking down light sensor is a front
 	 */
-	public void initialize(SensorPort ultra, SensorPort light, NXTRegulatedMotor right, NXTRegulatedMotor left) {
-		robot = new Robot(ultra, light, right, left);
+	public void initialize(Robot robot) {
+		this.robot = robot;
 	}
 
 	/**
@@ -98,6 +96,10 @@ public class Controller {
 					Display.drawComplete();
 					// stop the display from flickering
 					courseCompleted = true;
+					if(Button.ENTER.isDown()) {
+						// reset state to try again without restarting program
+						state = new RobotState();
+					}
 				} else if(!finish.isComplete()){
 					// TODO: Should we error handle?
 					robot.stop();
