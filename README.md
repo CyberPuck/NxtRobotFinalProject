@@ -14,3 +14,14 @@ The OS used is LejOS, a Java runtime environment on the NXT brick.
 - Get the Eclipse plugin for NXT: http://www.lejos.org/tools/eclipse/plugin/nxj/
 - Plug in the robot to the computer
 - Upload the source to the robot
+
+Still can't connect to the $#@% thing! :'(
+=====
+This issue is quiet vexing, if the jphantom.dll is resolve the phantom.dll correctly then a quick remedy is to install the Lego NXT 2.0 software.
+- Install Lego NXT 2.0 software
+- Open the Lego Mindstorms NXT application
+- Go to Tools -> Remote Control
+- There should be a list with one entry, your NXT brick
+- Connect to the brick, just to verify an error doesn't pop up
+- Close the Lego Mindstorms NXT application
+- Run the Eclipse plugin again, it should detect and push the software to the unit
