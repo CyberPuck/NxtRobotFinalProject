@@ -1,5 +1,7 @@
 package robot;
 
+import javax.xml.stream.events.ProcessingInstruction;
+
 import lejos.nxt.LightSensor;
 import lejos.nxt.NXTMotor;
 import lejos.nxt.NXTRegulatedMotor;
@@ -24,7 +26,7 @@ public class Robot {
 
 	public Robot(SensorPort ultra, SensorPort light, NXTRegulatedMotor right, NXTRegulatedMotor left, NXTMotor rightM, NXTMotor leftM) {
 		this.ultrasonic = new UltrasonicSensor(ultra);
-		this.lightSensor = new LightSensor(light);
+		this.lightSensor = new LightSensor(light, true);
 		this.rightMotor = right;
 		this.rightMotor.setSpeed(SPEED);
 		this.rightM = rightM;
@@ -32,10 +34,14 @@ public class Robot {
 		this.leftMotor.setSpeed(SPEED);
 		this.leftM = leftM;
 		movingForward = false;
+		
+		// setup ultro
+//		this.ultrasonic.setMode(UltrasonicSensor.MODE_PING);
 	}
 
 	public int getDistance() {
-		return ultrasonic.getDistance();
+//		return ultrasonic.getDistance();
+		return (int) ultrasonic.getRange();
 	}
 
 	public int getLight() {

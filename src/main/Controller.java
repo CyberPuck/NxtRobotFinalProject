@@ -76,7 +76,7 @@ public class Controller {
 			case NAVIGATION:
 				// robot is trying to navigate the course
 				Display.drawNavigationState(state, robot, navigator);
-				navigator.navigate();
+				navigator.navigate(robot.getDistance());
 				if (navigator.isNavigationComplete()) {
 					// finish up
 					state.incrementMode();

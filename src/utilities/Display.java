@@ -67,14 +67,17 @@ public class Display {
 	
 	public static void drawNavigationState(RobotState state, Robot robot, Navigator navigtor) {
 		LCD.clear();
-		drawState(state.getRobotMode());
-		drawHeading(state.getHeading());
-		drawLineValue(state.getLineValue(), robot.getLight());
-		LCD.drawString("Dist: ", 0, 0);
-		LCD.drawInt(navigtor.getNearestDistance(), 6, 3);
-		LCD.drawString("Evading? ", 0, 4);
-		String evading = navigtor.isEvading() ? "Yes" : "No";
-		LCD.drawString(evading, 9, 4);
+//		drawState(state.getRobotMode());
+//		drawHeading(state.getHeading());
+//		drawLineValue(state.getLineValue(), robot.getLight());
+//		LCD.drawString("Dist: ", 0, 0);
+//		LCD.drawInt(navigtor.getNearestDistance(), 6, 3);
+//		LCD.drawString("Evading? ", 0, 4);
+//		String evading = navigtor.isEvading() ? "Yes" : "No";
+//		LCD.drawString(evading, 9, 4);
+//		drawLineValue(state.getLineValue(), robot.getLight());
+//		LCD.drawInt(robot.getLight(), 0, 0);
+		LCD.drawInt(robot.getDistance(), 0, 0);
 	}
 	
 	public static void drawFinishMode(RobotState state, Robot robot, Finish finish) {

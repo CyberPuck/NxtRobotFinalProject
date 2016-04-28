@@ -10,7 +10,7 @@ import robot.Robot;
  */
 public class LineLearner {
 	// range to accept light value as the line
-	public static int RANGE = 3;
+	public static int RANGE = 10;
 	// object representing the robot
 	private Robot robot;
 	// flag indicating if the learner is complete
