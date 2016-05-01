@@ -10,7 +10,7 @@ import robot.Robot;
  */
 public class LineLearner {
 	// range to accept light value as the line
-	public static int RANGE = 10;
+	public static int RANGE = 3;
 	// object representing the robot
 	private Robot robot;
 	// flag indicating if the learner is complete
@@ -53,9 +53,9 @@ public class LineLearner {
 		return sd;
 	}
 
-	public void learnLine() {
+	public void learnLine(int lightValue) {
 		if(index < lightArray.length) {
-			lightArray[index++] = robot.getLight();
+			lightArray[index++] = lightValue;
 		} else {
 			// average the values
 			double average = 0.0;

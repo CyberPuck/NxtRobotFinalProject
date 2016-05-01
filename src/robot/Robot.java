@@ -1,7 +1,5 @@
 package robot;
 
-import javax.xml.stream.events.ProcessingInstruction;
-
 import lejos.nxt.LightSensor;
 import lejos.nxt.NXTMotor;
 import lejos.nxt.NXTRegulatedMotor;

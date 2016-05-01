@@ -1,5 +1,6 @@
 package modes;
 
+import learners.GroundLearner;
 import learners.LineLearner;
 
 /**
@@ -16,6 +17,8 @@ public class RobotState {
 	// line learner
 	private LineLearner lineLearner;
 	private int lineValue;
+	// ground learner
+	private int groundValue;
 	// navigation control
 	private Navigator navigator;
 	// finish line control
@@ -25,6 +28,7 @@ public class RobotState {
 		robotMode = Mode.READY;
 		currentHeading = 0;
 		lineValue = -1;
+		this.groundValue = -1;
 	}
 	
 	public Mode getRobotMode() {
@@ -37,6 +41,9 @@ public class RobotState {
 			robotMode = Mode.LINE_LEARNER;
 			break;
 		case LINE_LEARNER:
+			robotMode = Mode.GROUND_LEARNER;
+			break;
+		case GROUND_LEARNER:
 			robotMode = Mode.NAVIGATION;
 			break;
 		case NAVIGATION:
@@ -82,6 +89,21 @@ public class RobotState {
 	
 	public boolean isLine(int sample) {
 		if(sample <= lineValue + LineLearner.RANGE && sample >= lineValue - LineLearner.RANGE) {
+			return true;
+		}
+		return false;
+	}
+	
+	public int getGroundValue() {
+		return groundValue;
+	}
+
+	public void setGroundValue(int groundValue) {
+		this.groundValue = groundValue;
+	}
+	
+	public boolean isGround(int sample) {
+		if(sample <= groundValue + GroundLearner.RANGE && sample >= groundValue - GroundLearner.RANGE) {
 			return true;
 		}
 		return false;

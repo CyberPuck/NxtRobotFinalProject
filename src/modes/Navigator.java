@@ -9,7 +9,7 @@ import robot.Robot;
  */
 public class Navigator {
 	// default expected distance
-	private static int EVADE_DISTANCE = 20;
+	private static int EVADE_DISTANCE = 15;
 	// the distance to the nearest object picked up by the ultrasonic sensor
 	private int distanceFromNearestObject = 255;
 	// flag indicating if the robot is evading
@@ -22,7 +22,6 @@ public class Navigator {
 	private boolean endLineReached;
 	private boolean startLineReached;
 	private boolean turnLeft;
-	private int numberLineSample;
 	private int numberClearDistances;
 
 	public Navigator(Robot robot, RobotState state) {
@@ -34,7 +33,6 @@ public class Navigator {
 		endLineReached = false;
 		startLineReached = false;
 		this.turnLeft = false;
-		this.numberLineSample = 0;
 		this.numberClearDistances = 0;
 	}
 
@@ -49,27 +47,32 @@ public class Navigator {
 	public boolean isNavigationComplete() {
 		return naviagtionComplete;
 	}
+	
+	public boolean isInsideMOE() {
+		return enteredMOE;
+	}
+	
+	public boolean isEndLineReached() {
+		return endLineReached;
+	}
 
 	/**
 	 * Step through navigation.
 	 */
-	public void navigate(int d) {
+	public void navigate(int distance, int lightValue) {
 		if (!enteredMOE) {
 			// make sure the robot is moving forward
 			robot.moveForward();
 			// logic for robot outside MOE
-			int lightSample = robot.getLight();
+			int lightSample = lightValue;
 			if (state.isLine(lightSample)) {
 				startLineReached = true;
-			} else if (!state.isLine(lightSample) && startLineReached) {
-				numberLineSample++;
-				if (numberLineSample > 2) {
-					enteredMOE = true;
-				}
+			} else if (!state.isGround(lightSample) && startLineReached) {
+				enteredMOE = true;
 			}
 		} else {
 			// logic for robot inside MOE
-			int distance = d;
+			// TODO: Fix dodge logic
 			if (distance <= EVADE_DISTANCE) {
 				numberClearDistances = 0;
 				evading = true;
@@ -79,7 +82,7 @@ public class Navigator {
 				} else {
 					robot.turnRight();
 				}
-			} else if (distance > EVADE_DISTANCE) {
+			} else {
 				numberClearDistances++;
 				if (numberClearDistances > 2) {
 					if (evading) {
@@ -94,14 +97,13 @@ public class Navigator {
 				}
 				// TODO: Should this be in a separate category?
 				// assuming there are no targets within 6" of the end line
-				int lightSample = robot.getLight();
+				int lightSample = lightValue;
 				if (!endLineReached && state.isLine(lightSample)) {
-					endLineReached = true;
-				} else if (!state.isLine(lightSample) && endLineReached) {
+					this.endLineReached = true;
+				} else if (state.isGround(lightSample) && endLineReached) {
 					this.naviagtionComplete = true;
-				} else {
-					numberLineSample = 0;
 				}
+				
 				robot.moveForward();
 			}
 		}

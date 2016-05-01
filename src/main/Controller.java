@@ -1,5 +1,6 @@
 package main;
 
+import learners.GroundLearner;
 import learners.LineLearner;
 import lejos.nxt.Button;
 import modes.Finish;
@@ -49,67 +50,106 @@ public class Controller {
 	 */
 	public void startControlLoop() {
 		LineLearner lineLearner = new LineLearner(robot);
+		GroundLearner groundLearner = new GroundLearner(robot);
 		Navigator navigator = new Navigator(robot, state);
 		Finish finish = new Finish(robot, state);
 		boolean courseCompleted = false;
+		// start by drawing the ready state
+		Display.drawReadyState();
+		// variables to be passed around
+		int lightValue = 0;
+		int distance = 0;
 		// Only exit after the course has completed
 		while (!courseCompleted) {
 			switch (state.getRobotMode()) {
 			case READY:
-				// System is online, wait for operator to initiate line learner
-				Display.drawReadyState(state);
-				Button.waitForAnyPress();
+				// Wait for user input to being
+				Button.ENTER.waitForPress();
 				state.incrementMode();
+				Display.drawLineLearnerState(false);
+
 				break;
 			case LINE_LEARNER:
 				// operator has started line learner
-				Display.drawLineLearnerState(state, robot, lineLearner);
-				lineLearner.learnLine();
+				lightValue = robot.getLight();
+				lineLearner.learnLine(lightValue);
+				// update the display
+				Display.updateLearner(lightValue);
 				if (lineLearner.isLearnerComplete()) {
 					// ready to move through the course, wait for input to start
+					Display.drawLineLearnerState(true);
+					Display.updateLearner(lightValue);
 					state.setLineValue(lineLearner.getLineValue());
-					Display.debugLineLearnerState(state, robot, lineLearner);
-					Button.waitForAnyPress();
+					// wait for user input
+					Button.ENTER.waitForPress();
+					// start the ground learner
+					Display.drawGroundLearnerState(false);
 					state.incrementMode();
+				}
+				break;
+			case GROUND_LEARNER:
+				// operator has started line learner
+				lightValue = robot.getLight();
+				groundLearner.learnGround(lightValue);
+				Display.updateLearner(lightValue);
+				if (groundLearner.isLearnerComplete()) {
+					// ready to move through the course, wait for input to start
+					Display.drawGroundLearnerState(true);
+					Display.updateLearner(lightValue);
+					state.setGroundValue(groundLearner.getGroundValue());
+					// wait for user input to being the course
+					Button.ENTER.waitForPress();
+					Display.drawNavigationState();
+					state.incrementMode();
+
 				}
 				break;
 			case NAVIGATION:
 				// robot is trying to navigate the course
-				Display.drawNavigationState(state, robot, navigator);
-				navigator.navigate(robot.getDistance());
+				lightValue = robot.getLight();
+				distance = robot.getDistance();
+				navigator.navigate(distance, lightValue);
+				Display.updateNavigation(lightValue, distance);
+				if (navigator.isInsideMOE()) {
+					Display.drawInsideMOE();
+				}
+				if (navigator.isEndLineReached()) {
+					Display.drawEndLineReached();
+				}
 				if (navigator.isNavigationComplete()) {
 					// finish up
 					state.incrementMode();
+					Display.drawFinishState();
 				}
 				break;
 			case FINISH:
 				// robot is finishing movement
-				Display.drawFinishMode(state, robot, finish);
-				finish.finish();
+				lightValue = robot.getLight();
+				finish.finish(lightValue);
 				if (finish.isComplete()) {
 					// robot is stopped
 					state.incrementMode();
+					Display.drawComplete();
 				}
 				break;
 			case ERROR:
 				if (finish.isComplete() && !courseCompleted) {
-					Display.drawComplete();
 					// stop the display from flickering
 					courseCompleted = true;
-					if(Button.ENTER.isDown()) {
+					if (Button.ENTER.isDown()) {
 						// reset state to try again without restarting program
 						state = new RobotState();
 					}
-				} else if(!finish.isComplete()){
+				} else if (!finish.isComplete()) {
 					// TODO: Should we error handle?
 					robot.stop();
-					Display.drawError();
+					Display.drawError("Didn't complete");
 				}
 				break;
 			default:
 				// TODO: Should we error handle?
 				robot.stop();
-				Display.drawError();
+				Display.drawError("Default error");
 			}
 			if (Button.ESCAPE.isDown()) {
 				break;

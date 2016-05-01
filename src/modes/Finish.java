@@ -1,6 +1,7 @@
 package modes;
 
 import robot.Robot;
+import utilities.Display;
 
 /**
  * Handles finishing the robot movement after the line has been hit.
@@ -38,12 +39,15 @@ public class Finish {
 		return finishComplete;
 	}
 	
-	public void finish() {
-		if(state.isLine(robot.getLight())) {
-			robot.moveForward();
-		} else {
+	public void finish(int lightValue) {
+		if(state.isGround(lightValue)) {
 			// past the line!
 			// TODO: Need to move out of MOE
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				Display.drawError("Thread error");
+			}
 			robot.stop();
 			finishComplete = true;
 		}
