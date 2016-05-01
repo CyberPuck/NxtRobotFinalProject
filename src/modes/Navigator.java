@@ -93,7 +93,8 @@ public class Navigator {
 				}
 			} else {
 				numberClearDistances++;
-				if (evading && numberClearDistances > 2) {
+				// verify we have definitely cleared the obstacle
+				if (evading && numberClearDistances > 20) {
 					evading = false;
 					// start the stop watch
 					stopwatch = new Stopwatch();

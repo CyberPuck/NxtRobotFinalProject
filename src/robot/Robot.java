@@ -12,7 +12,7 @@ import lejos.nxt.UltrasonicSensor;
  * @author Cyber_Puck Mar 28, 2016
  */
 public class Robot {
-	private static int SPEED = 800;
+	private static int SPEED = 400;
 	// turning rate of wheel is SPEED / TURNING_FACTOR
 	private static int TURNING_FACTOR = 4;
 	// sensors for the robot
