@@ -1,7 +1,5 @@
 package learners;
 
-import robot.Robot;
-
 /**
  * Learns the starting line which will then be used to find the finish line.
  * 
@@ -11,8 +9,6 @@ import robot.Robot;
 public class LineLearner {
 	// range to accept light value as the line
 	public static int RANGE = 3;
-	// object representing the robot
-	private Robot robot;
 	// flag indicating if the learner is complete
 	private boolean learnerComplete;
 	// learned value of the line
@@ -27,14 +23,12 @@ public class LineLearner {
 	private double sd;
 	
 	/**
-	 * Initialize variables and get the robot.
-	 * @param robot holds sensor access
+	 * Initialize variables.
 	 */
-	public LineLearner(Robot robot) { 
+	public LineLearner() { 
 		lineValue = 0;
 		index = 0;
 		learnerComplete = false;
-		this.robot = robot;
 	}
 	
 	public boolean isLearnerComplete() {

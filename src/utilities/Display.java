@@ -1,6 +1,5 @@
 package utilities;
 
-import learners.LineLearner;
 import lejos.nxt.LCD;
 import modes.Finish;
 import modes.Mode;
@@ -81,6 +80,14 @@ public class Display {
 	
 	public static void drawEndLineReached() {
 		LCD.drawString("End LINE", 0, 4);
+	}
+	
+	public static void drawEvading() {
+		LCD.drawString("EVADING!", 0, 5);
+	}
+	
+	public static void clearEvading() {
+		LCD.clear(5);
 	}
 
 	private static void drawIntValue(int intValue, int row, int position) {

@@ -1,12 +1,8 @@
 package learners;
 
-import robot.Robot;
-
 public class GroundLearner {
 		// range to accept light value as the ground
 		public static int RANGE = 3;
-		// object representing the robot
-		private Robot robot;
 		// flag indicating if the learner is complete
 		private boolean learnerComplete;
 		// learned value of the ground
@@ -21,14 +17,12 @@ public class GroundLearner {
 		private double sd;
 		
 		/**
-		 * Initialize variables and get the robot.
-		 * @param robot holds sensor access
+		 * Initialize variables.
 		 */
-		public GroundLearner(Robot robot) { 
+		public GroundLearner() { 
 			groundValue = 0;
 			index = 0;
 			learnerComplete = false;
-			this.robot = robot;
 		}
 		
 		public boolean isLearnerComplete() {

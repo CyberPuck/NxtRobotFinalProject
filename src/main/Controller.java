@@ -29,8 +29,7 @@ public class Controller {
 	}
 
 	/**
-	 * Sets up the robot sensors. TODO: Include distance and speed values for
-	 * better testing?
+	 * Sets up the robot sensors.
 	 * 
 	 * @param ultra
 	 *            port to the ultrasonic sensor
@@ -49,8 +48,8 @@ public class Controller {
 	 * Primary control loop, magic happens here.
 	 */
 	public void startControlLoop() {
-		LineLearner lineLearner = new LineLearner(robot);
-		GroundLearner groundLearner = new GroundLearner(robot);
+		LineLearner lineLearner = new LineLearner();
+		GroundLearner groundLearner = new GroundLearner();
 		Navigator navigator = new Navigator(robot, state);
 		Finish finish = new Finish(robot, state);
 		boolean courseCompleted = false;
@@ -115,6 +114,11 @@ public class Controller {
 				}
 				if (navigator.isEndLineReached()) {
 					Display.drawEndLineReached();
+				}
+				if(navigator.isEvading()) {
+					Display.drawEvading();
+				} else {
+					Display.clearEvading();
 				}
 				if (navigator.isNavigationComplete()) {
 					// finish up

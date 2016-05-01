@@ -1,5 +1,6 @@
 package modes;
 
+import lejos.util.Stopwatch;
 import robot.Robot;
 
 /**
@@ -10,6 +11,8 @@ import robot.Robot;
 public class Navigator {
 	// default expected distance
 	private static int EVADE_DISTANCE = 15;
+	// delay before re-centering
+	private static int ROBOT_CENTERING_DELAY_MS = 1000;
 	// the distance to the nearest object picked up by the ultrasonic sensor
 	private int distanceFromNearestObject = 255;
 	// flag indicating if the robot is evading
@@ -23,6 +26,8 @@ public class Navigator {
 	private boolean startLineReached;
 	private boolean turnLeft;
 	private int numberClearDistances;
+	// stop watch for determining when to re-center (dodge the can)
+	private Stopwatch stopwatch;
 
 	public Navigator(Robot robot, RobotState state) {
 		evading = false;
@@ -32,7 +37,7 @@ public class Navigator {
 		this.enteredMOE = false;
 		endLineReached = false;
 		startLineReached = false;
-		this.turnLeft = false;
+		this.turnLeft = true;
 		this.numberClearDistances = 0;
 	}
 
@@ -47,11 +52,11 @@ public class Navigator {
 	public boolean isNavigationComplete() {
 		return naviagtionComplete;
 	}
-	
+
 	public boolean isInsideMOE() {
 		return enteredMOE;
 	}
-	
+
 	public boolean isEndLineReached() {
 		return endLineReached;
 	}
@@ -74,26 +79,31 @@ public class Navigator {
 			// logic for robot inside MOE
 			// TODO: Fix dodge logic
 			if (distance <= EVADE_DISTANCE) {
+				// always make sure count is zero
 				numberClearDistances = 0;
-				evading = true;
-				// TODO: Evade that shit and update heading
-				if (turnLeft) {
-					robot.turnLeft();
-				} else {
-					robot.turnRight();
+				// only update heading if we are not evading
+				if (!evading) {
+					evading = true;
+					// TODO: Evade that shit and update heading
+					if (turnLeft) {
+						robot.turnLeft();
+					} else {
+						robot.turnRight();
+					}
 				}
 			} else {
 				numberClearDistances++;
-				if (numberClearDistances > 2) {
-					if (evading) {
-						evading = false;
-						// flip turn left flag
-						turnLeft = !turnLeft;
-					} else {
-
-						// TODO: Turn forward
-						robot.moveForward();
-					}
+				if (evading && numberClearDistances > 2) {
+					evading = false;
+					// start the stop watch
+					stopwatch = new Stopwatch();
+					// start moving forward again
+					robot.moveForward();
+				} else if (stopwatch != null && stopwatch.elapsed() >= ROBOT_CENTERING_DELAY_MS) {
+					// re-center the robot after the delay
+					robot.recenter();
+					// TODO: Is this necessary?
+					stopwatch.reset();
 				}
 				// TODO: Should this be in a separate category?
 				// assuming there are no targets within 6" of the end line
@@ -103,7 +113,7 @@ public class Navigator {
 				} else if (state.isGround(lightSample) && endLineReached) {
 					this.naviagtionComplete = true;
 				}
-				
+
 				robot.moveForward();
 			}
 		}
