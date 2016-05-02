@@ -120,6 +120,8 @@ public class Controller {
 				} else {
 					Display.clearEvading();
 				}
+				Display.drawStopwatch(navigator.getStopwatchTime());
+				Display.drawStopwatch2(navigator.getSecondStopwatch());
 				if (navigator.isNavigationComplete()) {
 					// finish up
 					state.incrementMode();

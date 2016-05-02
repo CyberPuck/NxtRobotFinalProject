@@ -89,6 +89,16 @@ public class Display {
 	public static void clearEvading() {
 		LCD.clear(5);
 	}
+	
+	public static void drawStopwatch(int time) {
+		LCD.clear(6);
+		LCD.drawInt(time, 0, 6);
+	}
+	
+	public static void drawStopwatch2(int time) {
+		LCD.clear(7);
+		LCD.drawInt(time, 0, 7);
+	}
 
 	private static void drawIntValue(int intValue, int row, int position) {
 		LCD.clear(position, row, 3); // clear out a 3 digit int

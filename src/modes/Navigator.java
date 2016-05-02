@@ -13,6 +13,8 @@ public class Navigator {
 	private static int EVADE_DISTANCE = 15;
 	// delay before re-centering
 	private static int ROBOT_CENTERING_DELAY_MS = 1000;
+	// delay before moving straight (helps to clear obstacles)
+	private static int ROBOT_TURNING_DELAY_MS = 800;
 	// the distance to the nearest object picked up by the ultrasonic sensor
 	private int distanceFromNearestObject = 255;
 	// flag indicating if the robot is evading
@@ -25,9 +27,10 @@ public class Navigator {
 	private boolean endLineReached;
 	private boolean startLineReached;
 	private boolean turnLeft;
-	private int numberClearDistances;
-	// stop watch for determining when to re-center (dodge the can)
-	private Stopwatch stopwatch;
+	// stop watch for moving straight after evading
+	private Stopwatch straightStopwatch;
+	// stop watch for turning a little extra to clear the obstacle
+	private Stopwatch turningStopwatch;
 
 	public Navigator(Robot robot, RobotState state) {
 		evading = false;
@@ -38,7 +41,6 @@ public class Navigator {
 		endLineReached = false;
 		startLineReached = false;
 		this.turnLeft = true;
-		this.numberClearDistances = 0;
 	}
 
 	public int getNearestDistance() {
@@ -60,6 +62,20 @@ public class Navigator {
 	public boolean isEndLineReached() {
 		return endLineReached;
 	}
+	
+	public int getStopwatchTime() {
+		if(turningStopwatch!= null) {
+			return turningStopwatch.elapsed();
+		}
+		return -1;
+	}
+	
+	public int getSecondStopwatch() {
+		if(straightStopwatch != null) {
+			return straightStopwatch.elapsed();
+		}
+		return -1;
+	}
 
 	/**
 	 * Step through navigation.
@@ -79,10 +95,9 @@ public class Navigator {
 			// logic for robot inside MOE
 			// TODO: Fix dodge logic
 			if (distance <= EVADE_DISTANCE) {
-				// always make sure count is zero
-				numberClearDistances = 0;
 				// only update heading if we are not evading
 				if (!evading) {
+					// robot is now evading
 					evading = true;
 					// TODO: Evade that shit and update heading
 					if (turnLeft) {
@@ -92,19 +107,23 @@ public class Navigator {
 					}
 				}
 			} else {
-				numberClearDistances++;
 				// verify we have definitely cleared the obstacle
-				if (evading && numberClearDistances > 20) {
+				if (evading) {
+					// no longer evading
 					evading = false;
-					// start the stop watch
-					stopwatch = new Stopwatch();
+					turningStopwatch = new Stopwatch();
+					turningStopwatch.reset();
+				} else if (turningStopwatch != null && turningStopwatch.elapsed() >= ROBOT_TURNING_DELAY_MS) {
+					// start the stop watch for moving forward
+					straightStopwatch = new Stopwatch();
+					straightStopwatch.reset();
 					// start moving forward again
 					robot.moveForward();
-				} else if (stopwatch != null && stopwatch.elapsed() >= ROBOT_CENTERING_DELAY_MS) {
+				} else if (straightStopwatch != null && straightStopwatch.elapsed() >= ROBOT_CENTERING_DELAY_MS) {
 					// re-center the robot after the delay
 					robot.recenter();
 					// TODO: Is this necessary?
-					stopwatch.reset();
+					straightStopwatch.reset();
 				}
 				// TODO: Should this be in a separate category?
 				// assuming there are no targets within 6" of the end line
