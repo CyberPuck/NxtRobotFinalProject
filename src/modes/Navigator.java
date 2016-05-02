@@ -23,7 +23,7 @@ public class Navigator {
 	// delay before moving straight (helps to clear obstacles)
 	private static int ROBOT_TURNING_DELAY_MS = 500;
 	// delay before assuming the object in the way didn't exist
-	private static int OBSTACLE_TIMEOUT = 100;
+	private static int OBSTACLE_TIMEOUT = 300;
 	// the distance to the nearest object picked up by the ultrasonic sensor
 	private int distanceFromNearestObject = 255;
 	// flag indicating if the robot is evading
