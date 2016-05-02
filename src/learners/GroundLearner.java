@@ -2,7 +2,7 @@ package learners;
 
 public class GroundLearner {
 		// range to accept light value as the ground
-		public static int RANGE = 3;
+		public static int RANGE = 2;
 		// flag indicating if the learner is complete
 		private boolean learnerComplete;
 		// learned value of the ground

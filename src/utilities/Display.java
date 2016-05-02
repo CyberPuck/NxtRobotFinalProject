@@ -74,6 +74,11 @@ public class Display {
 		drawIntValue(distanceValue, 2, 6);
 	}
 	
+	public static void drawNavState(String state) {
+		LCD.clear(3);
+		LCD.drawString(state, 0, 3);
+	}
+	
 	public static void drawInsideMOE() {
 		LCD.drawString("INSIDE MOE", 0, 3);
 	}

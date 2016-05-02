@@ -12,7 +12,7 @@ import lejos.nxt.UltrasonicSensor;
  * @author Cyber_Puck Mar 28, 2016
  */
 public class Robot {
-	private static int SPEED = 400;
+	private static int SPEED = 500;
 	// turning rate of wheel is SPEED / TURNING_FACTOR
 	private static int TURNING_FACTOR = 4;
 	// sensors for the robot
@@ -116,6 +116,9 @@ public class Robot {
 			// flip motors so they ~= zero (original heading)
 			this.rightMotor.rotate(this.leftTachoCount, true);
 			this.leftMotor.rotate(this.rightTachoCount);
+			// reset the counts
+			this.leftTachoCount = 0;
+			this.rightTachoCount = 0;
 			// move forward now that we have course corrected
 			moveForward();
 		}

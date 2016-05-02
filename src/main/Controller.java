@@ -109,9 +109,10 @@ public class Controller {
 				distance = robot.getDistance();
 				navigator.navigate(distance, lightValue);
 				Display.updateNavigation(lightValue, distance);
-				if (navigator.isInsideMOE()) {
-					Display.drawInsideMOE();
-				}
+				Display.drawNavState(navigator.getNavState());
+//				if (navigator.isInsideMOE()) {
+//					Display.drawInsideMOE();
+//				}
 				if (navigator.isEndLineReached()) {
 					Display.drawEndLineReached();
 				}

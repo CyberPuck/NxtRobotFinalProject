@@ -48,6 +48,9 @@ public class Finish {
 			} catch (InterruptedException e) {
 				Display.drawError("Thread error");
 			}
+			// recenter if we have to
+			robot.recenter();
+			// stop the robot after re-centering
 			robot.stop();
 			finishComplete = true;
 		}
