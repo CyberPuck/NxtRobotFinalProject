@@ -135,6 +135,9 @@ public class Controller {
 				// robot is finishing movement
 				lightValue = robot.getLight();
 				finish.finish(lightValue);
+//				Display.drawStopwatch(lightValue);
+				Display.drawStopwatch(robot.getLeftTachoCount());
+				Display.drawStopwatch2(robot.getRightTachoCount());
 				if (finish.isComplete()) {
 					// robot is stopped
 					state.incrementMode();
