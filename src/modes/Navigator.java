@@ -53,7 +53,7 @@ public class Navigator {
 		this.enteredMOE = false;
 		endLineReached = false;
 		startLineReached = false;
-		this.turnLeft = false;
+		this.turnLeft = true;
 		// first enter the MOE
 		this.currentState = NavStates.ENTER_MOE;
 	}

@@ -62,7 +62,7 @@ public class Robot {
 	public void moveForward() {
 		if (!movingForward) {
 			// if the robot is turning get the tachometer counts for that turn
-			if(robotTurning) {
+			if (robotTurning) {
 				rightTachoCount = this.rightMotor.getTachoCount() - rightTachoCount;
 				leftTachoCount = this.leftMotor.getTachoCount() - leftTachoCount;
 				robotTurning = false;
@@ -114,8 +114,14 @@ public class Robot {
 		if (!robotTurning && movingForward) {
 			movingForward = false;
 			// flip motors so they ~= zero (original heading)
-			this.rightMotor.rotate(this.leftTachoCount, true);
-			this.leftMotor.rotate(this.rightTachoCount);
+			// check which rotation will take long and stop for that one
+			if (this.rightTachoCount > this.leftTachoCount) {
+				this.rightMotor.rotate(this.leftTachoCount, true);
+				this.leftMotor.rotate(this.rightTachoCount);
+			} else {
+				this.leftMotor.rotate(this.rightTachoCount, true);
+				this.rightMotor.rotate(this.leftTachoCount);
+			}
 			// reset the counts
 			this.leftTachoCount = 0;
 			this.rightTachoCount = 0;
@@ -144,6 +150,5 @@ public class Robot {
 	public int getLeftTachoCount() {
 		return leftTachoCount;
 	}
-	
-	
+
 }
