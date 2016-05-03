@@ -8,7 +8,7 @@ package learners;
  */
 public class LineLearner {
 	// range to accept light value as the line
-	public static int RANGE = 2;
+	public static int RANGE = 15;
 	// flag indicating if the learner is complete
 	private boolean learnerComplete;
 	// learned value of the line

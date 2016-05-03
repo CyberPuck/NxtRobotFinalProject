@@ -43,11 +43,13 @@ public class Finish {
 		if(state.isGround(lightValue)) {
 			// past the line!
 			// TODO: Need to move out of MOE
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				Display.drawError("Thread error");
-			}
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				Display.drawError("Thread error");
+//			}
+			// force the robot to move forward even if we are turning
+			robot.moveForward();
 			// recenter if we have to
 			robot.recenter();
 			// stop the robot after re-centering

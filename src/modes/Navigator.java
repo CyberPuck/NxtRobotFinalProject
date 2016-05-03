@@ -17,11 +17,11 @@ public class Navigator {
 	// current state of the navigator
 	private NavStates currentState;
 	// default expected distance
-	private static int EVADE_DISTANCE = 20;
+	private static int EVADE_DISTANCE = 25;
 	// delay before re-centering
 	private static int ROBOT_CENTERING_DELAY_MS = 200;
 	// delay before moving straight (helps to clear obstacles)
-	private static int ROBOT_TURNING_DELAY_MS = 500;
+	private static int ROBOT_TURNING_DELAY_MS = 300;
 	// delay before assuming the object in the way didn't exist
 	private static int OBSTACLE_TIMEOUT = 300;
 	// the distance to the nearest object picked up by the ultrasonic sensor
@@ -42,6 +42,8 @@ public class Navigator {
 	private Stopwatch turningStopwatch;
 	// stop watch for ensuring the detected object is actually there
 	private Stopwatch timeoutStopwatch;
+	// stop watch for ensuring the first line is crossed before checking if the end line is reached
+	private Stopwatch endLineStopwatch;
 
 	public Navigator(Robot robot, RobotState state) {
 		evading = false;
@@ -51,7 +53,7 @@ public class Navigator {
 		this.enteredMOE = false;
 		endLineReached = false;
 		startLineReached = false;
-		this.turnLeft = true;
+		this.turnLeft = false;
 		// first enter the MOE
 		this.currentState = NavStates.ENTER_MOE;
 	}
@@ -76,16 +78,23 @@ public class Navigator {
 		return endLineReached;
 	}
 
-	public int getStopwatchTime() {
+	public int getTurningStopwatch() {
 		if (turningStopwatch != null) {
 			return turningStopwatch.elapsed();
 		}
 		return -1;
 	}
 
-	public int getSecondStopwatch() {
+	public int getStraightStopwatch() {
 		if (straightStopwatch != null) {
 			return straightStopwatch.elapsed();
+		}
+		return -1;
+	}
+	
+	public int getEndLineStopwatch() {
+		if(endLineStopwatch != null) {
+			return endLineStopwatch.elapsed();
 		}
 		return -1;
 	}
@@ -104,10 +113,10 @@ public class Navigator {
 			// make sure the robot is moving forward
 			robot.moveForward();
 			// logic for robot outside MOE
-			int lightSample = lightValue;
-			if (state.isLine(lightSample)) {
+			if (state.isLine(lightValue)) {
 				startLineReached = true;
-			} else if (!state.isGround(lightSample) && startLineReached) {
+			} else if (state.isGround(lightValue) && startLineReached) {
+				endLineStopwatch = new Stopwatch();
 				// now moving
 				currentState = NavStates.MOVE_FORWARD;
 			}
@@ -121,7 +130,6 @@ public class Navigator {
 				currentState = NavStates.EVADE;
 			} else {
 				robot.moveForward();
-
 			}
 			break;
 		case EVADE:
@@ -133,32 +141,33 @@ public class Navigator {
 					robot.turnRight();
 				}
 			} else if(timeoutStopwatch.elapsed() > OBSTACLE_TIMEOUT){
-				// we have cleared the object
-				currentState = NavStates.DODGE;
 				// start up the turning timer
 				turningStopwatch = new Stopwatch();
 				turningStopwatch.reset();
+				// we have cleared the object
+				currentState = NavStates.DODGE;
 			}
 			break;
 		case DODGE:
 			// keep turning until the timer has expired
-			if (getStopwatchTime() >= ROBOT_TURNING_DELAY_MS) {
-				// update the state
-				currentState = NavStates.RECENTER;
+			if (getTurningStopwatch() >= ROBOT_TURNING_DELAY_MS) {
 				// start the stop watch for moving forward
 				straightStopwatch = new Stopwatch();
 				straightStopwatch.reset();
 				// start moving forward again
 				robot.moveForward();
+				// update the state
+				currentState = NavStates.RECENTER;
 			}
+			break;
 		case RECENTER:
-			if (getSecondStopwatch() >= ROBOT_CENTERING_DELAY_MS) {
+			if (getStraightStopwatch() >= ROBOT_CENTERING_DELAY_MS) {
 				// update the direction
 				turnLeft = !turnLeft;
-				// update the state
-				currentState = NavStates.MOVE_FORWARD;
 				// re-center the robot after the delay
 				robot.recenter();
+				// update the state
+				currentState = NavStates.MOVE_FORWARD;
 			}
 			break;
 		default:
@@ -166,7 +175,7 @@ public class Navigator {
 		}
 		// No matter what always check if the light has been hit
 		// Moving simply involves checking if the line was reached
-		if (currentState != NavStates.ENTER_MOE && state.isLine(lightValue)) {
+		if (getEndLineStopwatch() > 1000 && currentState != NavStates.ENTER_MOE && state.isLine(lightValue)) {
 			this.endLineReached = true;
 		} else if (state.isGround(lightValue) && endLineReached) {
 			this.naviagtionComplete = true;

@@ -121,8 +121,10 @@ public class Controller {
 				} else {
 					Display.clearEvading();
 				}
-				Display.drawStopwatch(navigator.getStopwatchTime());
-				Display.drawStopwatch2(navigator.getSecondStopwatch());
+//				Display.drawStopwatch(navigator.getTurningStopwatch());
+//				Display.drawStopwatch2(navigator.getStraightStopwatch());
+				Display.drawStopwatch(robot.getLeftTachoCount());
+				Display.drawStopwatch2(robot.getRightTachoCount());
 				if (navigator.isNavigationComplete()) {
 					// finish up
 					state.incrementMode();
