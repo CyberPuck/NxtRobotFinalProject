@@ -1,7 +1,6 @@
 package robot;
 
 import lejos.nxt.LightSensor;
-import lejos.nxt.NXTMotor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
@@ -19,9 +18,7 @@ public class Robot {
 	private UltrasonicSensor ultrasonic;
 	private LightSensor lightSensor;
 	private NXTRegulatedMotor rightMotor;
-	private NXTMotor rightM;
 	private NXTRegulatedMotor leftMotor;
-	private NXTMotor leftM;
 	private boolean movingForward;
 	// Represents the tachometer readings from the individual motors
 	private int rightTachoCount;
@@ -29,22 +26,17 @@ public class Robot {
 	// flag indicating if the robot is turning
 	private boolean robotTurning;
 
-	public Robot(SensorPort ultra, SensorPort light, NXTRegulatedMotor right, NXTRegulatedMotor left, NXTMotor rightM,
-			NXTMotor leftM) {
+	public Robot(SensorPort ultra, SensorPort light, NXTRegulatedMotor right, NXTRegulatedMotor left) {
 		this.ultrasonic = new UltrasonicSensor(ultra);
 		this.lightSensor = new LightSensor(light, true);
 		this.rightMotor = right;
 		this.rightMotor.setSpeed(SPEED);
-		this.rightM = rightM;
 		this.leftMotor = left;
 		this.leftMotor.setSpeed(SPEED);
-		this.leftM = leftM;
 		this.movingForward = false;
 		this.rightTachoCount = 0;
 		this.leftTachoCount = 0;
 		this.robotTurning = false;
-		// setup ultro
-		// this.ultrasonic.setMode(UltrasonicSensor.MODE_PING);
 	}
 
 	public int getDistance() {
@@ -70,10 +62,8 @@ public class Robot {
 			// make sure to reset the speed
 			this.rightMotor.setSpeed(SPEED);
 			this.leftMotor.setSpeed(SPEED);
-			// rightM.setPower(90);
+			// move motors forward
 			rightMotor.forward();
-			// leftM.setPower(100);
-			// rightM.setPower(95);
 			leftMotor.forward();
 			movingForward = true;
 		}
@@ -92,8 +82,10 @@ public class Robot {
 			// get the tachometer readings
 			rightTachoCount = this.rightMotor.getTachoCount();
 			leftTachoCount = this.leftMotor.getTachoCount();
+			// update movement flags
 			robotTurning = true;
 			movingForward = false;
+			// update motor for turning
 			this.leftMotor.setSpeed(SPEED / TURNING_FACTOR);
 		}
 	}
@@ -103,8 +95,10 @@ public class Robot {
 			// get the tachometer readings
 			rightTachoCount = this.rightMotor.getTachoCount();
 			leftTachoCount = this.leftMotor.getTachoCount();
+			// update movement flags
 			robotTurning = true;
 			movingForward = false;
+			// update motor for turning
 			this.rightMotor.setSpeed(SPEED / TURNING_FACTOR);
 		}
 	}
@@ -135,10 +129,9 @@ public class Robot {
 	 */
 	public void stop() {
 		if (movingForward) {
-			// rightM.setPower(0);
+			// allow motors to float for a smoother stop
 			rightMotor.flt(true);
 			leftMotor.flt(true);
-			// leftM.setPower(0);
 			movingForward = false;
 		}
 	}

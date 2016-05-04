@@ -102,9 +102,7 @@ public class RobotState {
 	}
 
 	public boolean isGround(int sample) {
-		// if(sample <= groundValue + GroundLearner.RANGE && sample >=
-		// groundValue - GroundLearner.RANGE) {
-		// TODO: Should be bound the lower value?
+		// Simply guard the higher value as the strip is brighter than the ground
 		if (sample <= groundValue + GroundLearner.RANGE) {
 			return true;
 		}

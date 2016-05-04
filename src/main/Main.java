@@ -1,8 +1,6 @@
 package main;
 
 import lejos.nxt.Motor;
-import lejos.nxt.MotorPort;
-import lejos.nxt.NXTMotor;
 import lejos.nxt.SensorPort;
 import robot.Robot;
 
@@ -16,9 +14,8 @@ public class Main {
 
 	public static void main(String[] args) {
 		// setup the robot
-		NXTMotor rightM = new NXTMotor(MotorPort.B);
-		NXTMotor leftM = new NXTMotor(MotorPort.A);
-		Robot robot = new Robot(SensorPort.S1, SensorPort.S2, Motor.B, Motor.A, rightM, leftM);
+		Robot robot = new Robot(SensorPort.S1, SensorPort.S2, Motor.B, Motor.A);
+		// setup the controller
 		Controller controller = new Controller();
 		controller.initialize(robot);
 		// start up the controller

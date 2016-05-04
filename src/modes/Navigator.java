@@ -134,7 +134,7 @@ public class Navigator {
 			break;
 		case EVADE:
 			if (distance <= EVADE_DISTANCE) {
-				// TODO: Evade that shit and update heading
+				// Evade the can, then start dodging
 				if (turnLeft) {
 					robot.turnLeft();
 				} else {
@@ -171,7 +171,7 @@ public class Navigator {
 			}
 			break;
 		default:
-			// TODO: Should an action occur?
+			// Nothing here, this is a bug if this happens
 		}
 		// No matter what always check if the light has been hit
 		// Moving simply involves checking if the line was reached
@@ -180,63 +180,5 @@ public class Navigator {
 		} else if (state.isGround(lightValue) && endLineReached) {
 			this.naviagtionComplete = true;
 		}
-
-		// TODO: Old code
-//		if (!enteredMOE) {
-//			// make sure the robot is moving forward
-//			robot.moveForward();
-//			// logic for robot outside MOE
-//			int lightSample = lightValue;
-//			if (state.isLine(lightSample)) {
-//				startLineReached = true;
-//			} else if (!state.isGround(lightSample) && startLineReached) {
-//				enteredMOE = true;
-//			}
-//		} else {
-//			// logic for robot inside MOE
-//			// TODO: Fix dodge logic
-//			if (distance <= EVADE_DISTANCE) {
-//				// only update heading if we are not evading
-//				if (!evading) {
-//					// robot is now evading
-//					evading = true;
-//					// TODO: Evade that shit and update heading
-//					if (turnLeft) {
-//						robot.turnLeft();
-//					} else {
-//						robot.turnRight();
-//					}
-//				}
-//			} else {
-//				// verify we have definitely cleared the obstacle
-//				if (evading) {
-//					// no longer evading
-//					evading = false;
-//					turningStopwatch = new Stopwatch();
-//					turningStopwatch.reset();
-//				} else if (turningStopwatch != null && turningStopwatch.elapsed() >= ROBOT_TURNING_DELAY_MS) {
-//					// start the stop watch for moving forward
-//					straightStopwatch = new Stopwatch();
-//					straightStopwatch.reset();
-//					// start moving forward again
-//					robot.moveForward();
-//				} else if (straightStopwatch != null && straightStopwatch.elapsed() >= ROBOT_CENTERING_DELAY_MS) {
-//					// re-center the robot after the delay
-//					robot.recenter();
-//					// TODO: Is this necessary?
-//					straightStopwatch.reset();
-//				}
-//				// TODO: Should this be in a separate category?
-//				// assuming there are no targets within 6" of the end line
-//				int lightSample = lightValue;
-//				if (!endLineReached && state.isLine(lightSample)) {
-//					this.endLineReached = true;
-//				} else if (state.isGround(lightSample) && endLineReached) {
-//					this.naviagtionComplete = true;
-//				}
-//
-//				robot.moveForward();
-//			}
-//		}
 	}
 }

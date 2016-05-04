@@ -153,13 +153,13 @@ public class Controller {
 						state = new RobotState();
 					}
 				} else if (!finish.isComplete()) {
-					// TODO: Should we error handle?
+					// Stop the robot a bad thing happened :(
 					robot.stop();
 					Display.drawError("Didn't complete");
 				}
 				break;
 			default:
-				// TODO: Should we error handle?
+				// Stop the robot, a bad thing happened :(
 				robot.stop();
 				Display.drawError("Default error");
 			}
