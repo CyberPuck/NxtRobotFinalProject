@@ -16,6 +16,8 @@ public class Navigator {
 
 	// current state of the navigator
 	private NavStates currentState;
+	// The movement state for the robot
+	private NavMode navMode;
 	// default expected distance
 	private static int EVADE_DISTANCE = 25;
 	// delay before re-centering
@@ -56,6 +58,8 @@ public class Navigator {
 		this.turnLeft = true;
 		// first enter the MOE
 		this.currentState = NavStates.ENTER_MOE;
+		// nav mode defaults to left only
+		navMode = NavMode.LEFT;
 	}
 
 	public int getNearestDistance() {
@@ -102,6 +106,16 @@ public class Navigator {
 	public String getNavState() {
 		return currentState.toString();
 	}
+	
+	public void setNavMode(NavMode newMode) {
+		this.navMode = newMode;
+		// properly setup the zig zag modes
+		if(this.navMode == NavMode.LEFT_ZIG) {
+			turnLeft = true;
+		} else if(this.navMode == NavMode.RIGHT_ZAG) {
+			turnLeft = false;
+		}
+	}
 
 	/**
 	 * Step through navigation.
@@ -135,11 +149,25 @@ public class Navigator {
 		case EVADE:
 			if (distance <= EVADE_DISTANCE) {
 				// Evade the can, then start dodging
-				if (turnLeft) {
-					robot.turnLeft();
-				} else {
-					robot.turnRight();
+				switch(this.navMode) {
+				case LEFT:
+					turnRobot(true);
+					break;
+				case LEFT_ZIG:
+					turnRobot(turnLeft);
+					break;
+				case RIGHT_ZAG:
+					turnRobot(turnLeft);
+					break;
+				case RIGHT:
+					turnRobot(false);
+					break;
 				}
+//				if (turnLeft) {
+//					robot.turnLeft();
+//				} else {
+//					robot.turnRight();
+//				}
 			} else if(timeoutStopwatch.elapsed() > OBSTACLE_TIMEOUT){
 				// start up the turning timer
 				turningStopwatch = new Stopwatch();
@@ -179,6 +207,14 @@ public class Navigator {
 			this.endLineReached = true;
 		} else if (state.isGround(lightValue) && endLineReached) {
 			this.naviagtionComplete = true;
+		}
+	}
+	
+	private void turnRobot(boolean turnLeft) {
+		if(turnLeft) {
+			robot.turnLeft();
+		} else {
+			robot.turnRight();
 		}
 	}
 }

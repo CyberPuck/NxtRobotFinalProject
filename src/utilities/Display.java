@@ -46,9 +46,21 @@ public class Display {
 		drawState(Mode.GROUND_LEARNER);
 		LCD.drawString("Strip: ", 0, row++);
 		if (learnerComplete) {
-			LCD.drawString("Ready to start", 0, row++);
+			LCD.drawString("Select Nav Mode", 0, row++);
 			LCD.drawString("Press any key...", 0, row++);
 		}
+	}
+	
+	public static void drawNavSelectionState(String mode) {
+		LCD.clear();
+		drawState(Mode.NAV_MODE);
+		LCD.drawString("Select mode:", 0, 1);
+		LCD.drawString(mode, 0, 2);
+	}
+	
+	public static void updateNavMode(String mode) {
+		LCD.clear(2);
+		LCD.drawString(mode, 0, 2);
 	}
 
 	public static void drawNavigationState() {

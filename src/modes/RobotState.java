@@ -43,6 +43,9 @@ public class RobotState {
 			robotMode = Mode.GROUND_LEARNER;
 			break;
 		case GROUND_LEARNER:
+			robotMode = Mode.NAV_MODE;
+			break;
+		case NAV_MODE:
 			robotMode = Mode.NAVIGATION;
 			break;
 		case NAVIGATION:

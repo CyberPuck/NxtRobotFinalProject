@@ -4,6 +4,7 @@ import learners.GroundLearner;
 import learners.LineLearner;
 import lejos.nxt.Button;
 import modes.Finish;
+import modes.NavSelection;
 import modes.Navigator;
 import modes.RobotState;
 import robot.Robot;
@@ -48,9 +49,15 @@ public class Controller {
 	 * Primary control loop, magic happens here.
 	 */
 	public void startControlLoop() {
+		// learns the entrance line
 		LineLearner lineLearner = new LineLearner();
+		// learns the ground value
 		GroundLearner groundLearner = new GroundLearner();
+		// moves robot in MOE
 		Navigator navigator = new Navigator(robot, state);
+		// allows user to select operation mode
+		NavSelection selector = new NavSelection();
+		// handles finishing the robot
 		Finish finish = new Finish(robot, state);
 		boolean courseCompleted = false;
 		// start by drawing the ready state
@@ -97,10 +104,32 @@ public class Controller {
 					Display.updateLearner(lightValue);
 					state.setGroundValue(groundLearner.getGroundValue());
 					// wait for user input to being the course
-					Button.ENTER.waitForPress();
-					Display.drawNavigationState();
+					Button.ENTER.waitForPressAndRelease();
+//					Display.drawNavigationState();
+					Display.drawNavSelectionState(selector.getNavMode().toString());
 					state.incrementMode();
 
+				}
+				break;
+			case NAV_MODE:
+				// allow the user to select the navigation mode
+				if(Button.LEFT.isDown()) {
+					selector.previousMode();
+					Display.updateNavMode(selector.getNavMode().toString());
+					// make sure we don't debounce
+					Button.LEFT.waitForPressAndRelease();
+				} 
+				if(Button.RIGHT.isDown()) {
+					selector.nextMode();
+					Display.updateNavMode(selector.getNavMode().toString());
+					// make sure we don't debounce
+					Button.RIGHT.waitForPressAndRelease();
+				} 
+				if(Button.ENTER.isDown()) {
+					navigator.setNavMode(selector.getNavMode());
+					Button.ENTER.waitForPressAndRelease();
+					Display.drawNavigationState();
+					state.incrementMode();
 				}
 				break;
 			case NAVIGATION:
