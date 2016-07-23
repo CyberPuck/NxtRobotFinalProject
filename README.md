@@ -4,6 +4,12 @@ NXT Robot Final 2016
 This project requires a robot to start at a line, navigate a course will dodging cans and get to the finish line while
 being within +/- 10 degrees from the starting orientation.
 
+Class Results
+=====
+After completion of the course in the class final, this robot came in first place dodging approximately 4 cans and 
+completing the course in 19 seconds (the faster time).  Operation was spot on, a note about the ultrasonic sensors 
+is that they are extremely sensitive to room people sensors and had to be covered prior to running the course.
+
 Setup
 =====
 The OS used is LejOS, a Java runtime environment on the NXT brick.
